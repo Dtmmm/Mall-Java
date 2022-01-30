@@ -19,7 +19,7 @@ public class InitRedisData implements ApplicationRunner {
     BookService bookService;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args){
         bookService.initInventory();
     }
 }
