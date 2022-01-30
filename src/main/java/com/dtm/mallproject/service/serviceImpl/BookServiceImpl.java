@@ -117,6 +117,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void initInventory() {
+        redisUtil.del("inventory");
         List<BookDO> books = bookMapper.selectList(new QueryWrapper<>());
         books.forEach(book -> {
             String id = book.getId();
