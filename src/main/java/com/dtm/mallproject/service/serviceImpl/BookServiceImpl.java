@@ -188,4 +188,11 @@ public class BookServiceImpl implements BookService {
         // 返回组装后的数据
         return dataTransformUtil.BookDOToRecommendBookVO(books);
     }
+
+    @Override
+    public BookDO selectBookByCondition(String condition) {
+        QueryWrapper<BookDO> qw = new QueryWrapper<>();
+        qw.eq("id",condition).or().eq("book_name",condition);
+        return bookMapper.selectOne(qw);
+    }
 }

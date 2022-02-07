@@ -125,4 +125,11 @@ public interface UserService {
      * @return 操作结果
      */
     Integer deleteUserById(String id);
+
+    /**
+     * 根据用户名或用户编号查询用户信息
+     * @param condition 用户名或用户编号
+     * @return 用户信息
+     */
+    UserDO selectUserByCondition(String condition);
 }

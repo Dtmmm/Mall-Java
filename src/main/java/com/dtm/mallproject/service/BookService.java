@@ -122,4 +122,11 @@ public interface BookService {
      * @return 同类推荐的书
      */
     List<RecommendBookVO> selectRecommendBook(String bookId);
+
+    /**
+     * 根据图书名或图书编号查询图书信息
+     * @param condition 图书名或图书编号
+     * @return 图书信息
+     */
+    BookDO selectBookByCondition(String condition);
 }

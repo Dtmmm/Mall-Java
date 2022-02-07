@@ -223,4 +223,11 @@ public class UserServiceImpl implements UserService {
     public Integer deleteUserById(String id) {
         return userMapper.deleteById(id);
     }
+
+    @Override
+    public UserDO selectUserByCondition(String condition) {
+        QueryWrapper<UserDO> qw = new QueryWrapper<>();
+        qw.eq("id",condition).or().eq("user_name",condition);
+        return userMapper.selectOne(qw);
+    }
 }

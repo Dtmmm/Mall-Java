@@ -106,6 +106,17 @@ public class BackstageHandler {
     }
 
     /**
+     * 根据图书名或图书编号查询图书信息
+     * @param condition 图书名或图书编号
+     * @return 图书信息
+     */
+    @GetMapping("/selectBookByCondition/{condition}")
+    @ResponseBody
+    public BookDO selectBookByCondition(@PathVariable String condition){
+        return bookService.selectBookByCondition(condition);
+    }
+
+    /**
      * 分页获取所有用户信息
      *
      * @param currentPage 当前页
@@ -143,6 +154,17 @@ public class BackstageHandler {
     @ResponseBody
     public Integer deleteUserById(@RequestParam String id){
         return userService.deleteUserById(id);
+    }
+
+    /**
+     * 根据用户名或用户编号查询用户信息
+     * @param condition 用户名或用户编号
+     * @return 用户信息
+     */
+    @GetMapping("selectUserByCondition/{condition}")
+    @ResponseBody
+    public UserDO selectUserByCondition(@PathVariable String condition){
+        return userService.selectUserByCondition(condition);
     }
 
     /**
