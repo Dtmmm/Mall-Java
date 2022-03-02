@@ -10,6 +10,7 @@ import com.dtm.mallproject.pojo.entity.UserDO;
 import com.dtm.mallproject.pojo.vo.*;
 import com.dtm.mallproject.service.UserService;
 import com.dtm.mallproject.util.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
@@ -30,6 +31,7 @@ import java.util.Set;
  * @date : Created in 2021/12/1 16:44
  * @description : 用户接口实现类
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
     @Resource
@@ -126,7 +128,10 @@ public class UserServiceImpl implements UserService {
         });
 
         // 3.判断事务执行结果
-        if (execute == null || execute.size() == 0) {return fail;}
+        if (execute == null || execute.size() == 0) {
+            log.error("*****事务执行失败*****");
+            return fail;
+        }
 
         // operations.exec()的返回值是一个集合，对应所有的事务操作
         // execute.get(0)对应增加到购物车的操作
@@ -146,11 +151,13 @@ public class UserServiceImpl implements UserService {
                 return success;
             }
             // 库存没有成功减少(高并发状态下才有可能出现)，恢复库存
+            log.error("*****减少库存失败*****");
             redisUtil.hIncrBy("inventory", bookId, quantity.longValue());
             return shortage;
+        } else {
+            log.error("*****增加图书到购物车失败*****");
+            return fail;
         }
-
-        return fail;
     }
 
     @Override
@@ -172,7 +179,10 @@ public class UserServiceImpl implements UserService {
     public Integer deleteCart(String id, String bookId, Integer quantity) {
         // 返还图书库存
         Long returnInventory = redisUtil.hIncrBy("inventory",bookId,quantity.longValue());
-        if (returnInventory <= 0) {return 0;}
+        if (returnInventory <= 0) {
+            log.error("*****返还图书库存失败*****");
+            return 0;
+        }
         // 同步库存信息到数据库
         /*
         同步操作由定时任务完成

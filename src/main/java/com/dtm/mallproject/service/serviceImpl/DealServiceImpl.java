@@ -14,6 +14,7 @@ import com.dtm.mallproject.pojo.vo.DealInfoPageDisplayVO;
 import com.dtm.mallproject.pojo.vo.DealInfoVO;
 import com.dtm.mallproject.service.DealService;
 import com.dtm.mallproject.util.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import java.util.Map;
  * @date : Created in 2021/12/7 17:32
  * @description : 订单接口实现类
  */
+@Slf4j
 @Service
 public class DealServiceImpl implements DealService {
     @Resource
@@ -62,6 +64,7 @@ public class DealServiceImpl implements DealService {
         // 更新订单表
         int insertDeal = dealMapper.insert(deal);
         if (insertDeal <= 0) {
+            log.error("*****新增订单表失败*****");
             return 0;
         }
 
@@ -71,11 +74,17 @@ public class DealServiceImpl implements DealService {
             // 更新订单详情表
             dealDetail.setDealId(dealId);
             int insertDealDetail = dealDetailMapper.insert(dealDetail);
-            if (insertDealDetail <= 0) {return 0;}
+            if (insertDealDetail <= 0) {
+                log.error("*****新增订单详情表失败*****");
+                return 0;
+            }
 
             // 从 Redis 的购物车中删除该条记录
             int del = redisUtil.hDel(redisCartKey, dealDetail.getBookId());
-            if (del <= 0) {return 0;}
+            if (del <= 0) {
+                log.error("*****从Redis中删除购物车记录失败*****");
+                return 0;
+            }
         }
 
         // 如果这笔订单是正常支付
@@ -88,7 +97,9 @@ public class DealServiceImpl implements DealService {
 
             // 更新图书累计销售量
             int updateSalesResult = updateSales(dealDetails);
-            if (updateSalesResult == 0) {return 0;}
+            if (updateSalesResult == 0) {
+                return 0;
+            }
         }
 
         return 1;
@@ -109,6 +120,7 @@ public class DealServiceImpl implements DealService {
         // 库存减一
         Long hDecrBy = redisUtil.hDecrBy("inventory", dealDetails.get(0).getBookId(), 1L);
         if (hDecrBy < 0) {
+            log.error("*****减少库存失败*****");
             return fail;
         }
 
@@ -126,6 +138,7 @@ public class DealServiceImpl implements DealService {
         // 更新订单表
         int insertDeal = dealMapper.insert(deal);
         if (insertDeal <= 0) {
+            log.error("*****新增订单表失败*****");
             return fail;
         }
 
@@ -135,6 +148,7 @@ public class DealServiceImpl implements DealService {
             dealDetail.setDealId(dealId);
             int insertDealDetail = dealDetailMapper.insert(dealDetail);
             if (insertDealDetail <= 0) {
+                log.error("*****新增订单详情表失败*****");
                 return fail;
             }
         }
@@ -149,7 +163,9 @@ public class DealServiceImpl implements DealService {
 
             // 更新图书累计销售量
             int updateSalesResult = updateSales(dealDetails);
-            if (updateSalesResult == 0) {return fail;}
+            if (updateSalesResult == 0) {
+                return fail;
+            }
         }
 
         return success;
@@ -173,6 +189,7 @@ public class DealServiceImpl implements DealService {
         int updateConsumptionResult = userMapper.updateById(user);
 
         if (updateConsumptionResult <= 0) {
+            log.error("*****更新用户累计消费额失败*****");
             return 0;
         }
         return 1;
@@ -195,7 +212,10 @@ public class DealServiceImpl implements DealService {
             book.setId(dealDetail.getBookId());
             book.setSales(dealDetail.getBookQuantity()+(int)maps.get(0).get("sales"));
             int updateQuantityResult = bookMapper.updateById(book);
-            if (updateQuantityResult <= 0) {return 0;}
+            if (updateQuantityResult <= 0) {
+                log.error("*****更新图书累计销售量失败*****");
+                return 0;
+            }
         }
         return 1;
     }
@@ -214,13 +234,17 @@ public class DealServiceImpl implements DealService {
         DealDO dealDO = dealMapper.selectOne(new QueryWrapper<DealDO>().eq("id", dealId));
         int updateConsumptionResult = updateConsumption(dealDO);
         if (updateConsumptionResult == 0) {
+            log.error("*****更新用户累计消费额失败*****");
             return 0;
         }
 
         // 更新图书累计销售量
         List<DealDetailDO> dealDetails = dealDetailMapper.selectList(new QueryWrapper<DealDetailDO>().eq("deal_id", dealId));
         int updateSalesResult = updateSales(dealDetails);
-        if (updateSalesResult == 0) {return 0;}
+        if (updateSalesResult == 0) {
+            log.error("*****更新图书累计销售量失败*****");
+            return 0;
+        }
 
         return 1;
     }
@@ -245,11 +269,21 @@ public class DealServiceImpl implements DealService {
             */
         }
 
+        // 删除订单和订单详情
         int deleteDealResult = dealMapper.deleteById(dealId);
-        int dealDealDetailResult = dealDetailMapper.delete(
-                new QueryWrapper<DealDetailDO>().eq("deal_id", dealId));
-        if (deleteDealResult == 1 && dealDealDetailResult > 0) {return 1;}
-        return 0;
+        if (deleteDealResult == 1){
+            int dealDealDetailResult = dealDetailMapper.delete(
+                    new QueryWrapper<DealDetailDO>().eq("deal_id", dealId));
+            if (dealDealDetailResult > 0){
+                return 1;
+            } else {
+                log.error("*****删除订单详情失败*****");
+                return 0;
+            }
+        } else {
+            log.error("*****删除订单失败*****");
+            return 0;
+        }
     }
 
     @Override
@@ -301,10 +335,16 @@ public class DealServiceImpl implements DealService {
             qw.eq("deal_id",id);
             int delete = dealDetailMapper.delete(qw);
             // 都成功则返回1
-            if (delete >0) {return 1;}
+            if (delete >0) {
+                return 1;
+            } else {
+                log.error("*****删除订单详情失败*****");
+                return 0;
+            }
+        } else {
+            log.error("*****删除订单失败*****");
+            return 0;
         }
-        // 订单记录删除失败
-        return 0;
     }
 
     @Override
