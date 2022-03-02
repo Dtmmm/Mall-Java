@@ -6,6 +6,7 @@ import com.dtm.mallproject.mapper.BookMapper;
 import com.dtm.mallproject.pojo.entity.BookDO;
 import com.dtm.mallproject.service.serviceImpl.BookServiceImpl;
 import com.dtm.mallproject.util.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @date : Created in 2022/3/2 8:48
  * @description : 定时任务类
  */
+@Slf4j
 @Component
 @EnableScheduling
 public class ScheduleTask {
@@ -34,7 +36,7 @@ public class ScheduleTask {
      */
     @Scheduled(cron = "0 1/1 * * * ?")
     public void synRedisData(){
-        System.out.println("==========开始同步Redis的库存信息==========");
+        log.info("===开始同步Redis的库存信息===");
         try {
             // 取到Redis中库存信息的所有键值对集合
             Map<String, String> inventoryInfo = redisUtil.hEntries("inventory");
@@ -48,12 +50,12 @@ public class ScheduleTask {
             // 使用MP提供的批量更新方法
             boolean result = bookService.updateBatchById(books);
             if (!result){
-                System.out.println("************同步Redis的库存信息失败************");
+                log.error("***同步Redis的库存信息失败***");
             }
         } catch (Exception e){
-            System.out.println("************同步Redis的库存信息时出错************");
-            System.out.println(e.getMessage());
+            log.error("***同步Redis的库存信息时出错***");
+            log.error(e.getMessage());
         }
-        System.out.println("=================同步结束=================");
+        log.info("======同步结束======");
     }
 }

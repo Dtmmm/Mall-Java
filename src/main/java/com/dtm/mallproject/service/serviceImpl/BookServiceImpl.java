@@ -10,6 +10,7 @@ import com.dtm.mallproject.pojo.vo.*;
 import com.dtm.mallproject.service.BookService;
 import com.dtm.mallproject.util.DataTransformUtil;
 import com.dtm.mallproject.util.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +23,7 @@ import java.util.List;
  * @date : Created in 2021/11/26 16:57
  * @description : 图书接口实现类
  */
+@Slf4j
 @Service
 public class BookServiceImpl extends ServiceImpl<BookMapper,BookDO> implements BookService {
     @Resource
@@ -119,18 +121,14 @@ public class BookServiceImpl extends ServiceImpl<BookMapper,BookDO> implements B
     @Override
     public void initInventory() {
         redisUtil.del("inventory");
-        System.out.println("==========================================");
-        System.out.println("=============开始初始化库存信息=============");
-        System.out.println("==========================================");
+        log.info("===开始初始化库存信息===");
         List<BookDO> books = bookMapper.selectList(new QueryWrapper<>());
         books.forEach(book -> {
             String id = book.getId();
             Integer inventory = book.getInventory();
             redisUtil.hSet("inventory", id, inventory.toString());
         });
-        System.out.println("==========================================");
-        System.out.println("=============初始化库存信息完成=============");
-        System.out.println("==========================================");
+        log.info("===初始化库存信息完成===");
     }
 
     @Override
