@@ -104,7 +104,7 @@ public class RedisUtil {
      * @param key 键
      * @return 键值对集合
      */
-    public Map<Object, Object> hEntries(String key){
+    public Map<String, String> hEntries(String key){
         return redisTemplate.opsForHash().entries(key);
     }
 

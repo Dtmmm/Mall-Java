@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 @Component
 public class InitRedisData implements ApplicationRunner {
     @Resource
-    BookService bookService;
+    private BookService bookService;
 
     @Override
     public void run(ApplicationArguments args){

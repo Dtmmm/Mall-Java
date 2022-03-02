@@ -2,6 +2,7 @@ package com.dtm.mallproject.service.serviceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dtm.mallproject.exception.EmptyParameterException;
 import com.dtm.mallproject.mapper.BookMapper;
 import com.dtm.mallproject.pojo.entity.BookDO;
@@ -22,13 +23,13 @@ import java.util.List;
  * @description : 图书接口实现类
  */
 @Service
-public class BookServiceImpl implements BookService {
+public class BookServiceImpl extends ServiceImpl<BookMapper,BookDO> implements BookService {
     @Resource
-    BookMapper bookMapper;
+    private BookMapper bookMapper;
     @Resource
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
     @Resource
-    DataTransformUtil dataTransformUtil;
+    private DataTransformUtil dataTransformUtil;
 
     @Override
     public List<BookDO> selectAllBook() {
@@ -118,12 +119,18 @@ public class BookServiceImpl implements BookService {
     @Override
     public void initInventory() {
         redisUtil.del("inventory");
+        System.out.println("==========================================");
+        System.out.println("=============开始初始化库存信息=============");
+        System.out.println("==========================================");
         List<BookDO> books = bookMapper.selectList(new QueryWrapper<>());
         books.forEach(book -> {
             String id = book.getId();
             Integer inventory = book.getInventory();
             redisUtil.hSet("inventory", id, inventory.toString());
         });
+        System.out.println("==========================================");
+        System.out.println("=============初始化库存信息完成=============");
+        System.out.println("==========================================");
     }
 
     @Override

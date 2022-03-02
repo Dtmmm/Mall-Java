@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/comment")
 public class CommentHandler {
     @Resource
-    CommentService commentService;
+    private CommentService commentService;
 
     /**
      * 根据图书编号分页查询评论

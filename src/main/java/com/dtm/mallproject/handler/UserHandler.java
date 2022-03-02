@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserHandler {
     @Resource
-    UserService userService;
+    private UserService userService;
 
     /**
      * 根据用户编号查询用户信息

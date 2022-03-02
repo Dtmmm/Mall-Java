@@ -1,5 +1,6 @@
 package com.dtm.mallproject.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.dtm.mallproject.pojo.entity.BookDO;
 import com.dtm.mallproject.pojo.vo.*;
 
@@ -9,9 +10,9 @@ import java.util.List;
  * @author : 邓童淼
  * @program : Mall-Project
  * @date : Created in 2021/11/26 16:56
- * @description : 图书的相关操作对应的接口
+ * @description : 图书的相关操作对应的接口，继承 IService 接口，以实现批量更新操作
  */
-public interface BookService {
+public interface BookService extends IService<BookDO> {
     /**
      * 查询所有图书
      *

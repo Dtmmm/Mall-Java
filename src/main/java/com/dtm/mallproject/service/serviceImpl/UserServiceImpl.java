@@ -33,11 +33,11 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService {
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
     @Resource
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
     @Resource
-    BookMapper bookMapper;
+    private BookMapper bookMapper;
 
     @Override
     public UserInfoVO selectUserById(String id) {
@@ -129,15 +129,21 @@ public class UserServiceImpl implements UserService {
         if (execute == null || execute.size() == 0) {return fail;}
 
         // operations.exec()的返回值是一个集合，对应所有的事务操作
+        // execute.get(0)对应增加到购物车的操作
         if (Integer.parseInt(execute.get(0).toString()) >= 0){
+            // execute.get(1)对应减少库存的操作
             if (Integer.parseInt(execute.get(1).toString()) >= 0) {
-                // 当事务都执行成功了，同步库存信息到数据库
+                // 事务都执行成功了
+                /*
+                同步操作由定时任务完成
                 int nowInventory = Integer.parseInt(redisUtil.hGet("inventory", bookId));
                 BookDO book = new BookDO();
                 book.setId(bookId);
                 book.setInventory(nowInventory);
                 int updateResult = bookMapper.updateById(book);
                 if (updateResult == 1) {return success;}
+                */
+                return success;
             }
             // 库存没有成功减少(高并发状态下才有可能出现)，恢复库存
             redisUtil.hIncrBy("inventory", bookId, quantity.longValue());
@@ -152,12 +158,12 @@ public class UserServiceImpl implements UserService {
         List<CartInfoVO> cart = new ArrayList<>();
         DecimalFormat df = new DecimalFormat("0.00");
 
-        Map<Object, Object> entries = redisUtil.hEntries("cart_"+id);
+        Map<String, String> entries = redisUtil.hEntries("cart_"+id);
         entries.forEach((bookId,quantity) -> {
             BookDO book = bookMapper.selectOne(new QueryWrapper<BookDO>().eq("id", bookId));
             double discountPrice = Double.parseDouble(df.format(book.getPrice() * book.getDiscount()));
-            cart.add(new CartInfoVO(book.getId(),book.getBookName(),discountPrice,book.getAuthor(),
-                    book.getPress(),Integer.parseInt(quantity.toString()),book.getImg()));
+            cart.add(new CartInfoVO(book.getId(),book.getBookName(),discountPrice,
+                    book.getAuthor(), book.getPress(),Integer.parseInt(quantity),book.getImg()));
         });
         return cart;
     }
@@ -168,13 +174,15 @@ public class UserServiceImpl implements UserService {
         Long returnInventory = redisUtil.hIncrBy("inventory",bookId,quantity.longValue());
         if (returnInventory <= 0) {return 0;}
         // 同步库存信息到数据库
+        /*
+        同步操作由定时任务完成
         int nowInventory = Integer.parseInt(redisUtil.hGet("inventory", bookId));
         BookDO book = new BookDO();
         book.setId(bookId);
         book.setInventory(nowInventory);
         int updateResult = bookMapper.updateById(book);
         if (updateResult <= 0) {return 0;}
-
+        */
         return redisUtil.hDel("cart_"+id, bookId);
     }
 

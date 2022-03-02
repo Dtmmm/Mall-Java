@@ -24,11 +24,11 @@ import java.util.Map;
 @Service
 public class CommentServiceImpl implements CommentService {
     @Resource
-    CommentMapper commentMapper;
+    private CommentMapper commentMapper;
     @Resource
-    DataTransformUtil dataTransformUtil;
+    private DataTransformUtil dataTransformUtil;
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Override
     public CommentPageDisplayVO selectCommentByBookId(String bookId, Integer currentPage, Integer pageSize) {

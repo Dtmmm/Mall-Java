@@ -25,11 +25,11 @@ import java.util.List;
 @RequestMapping("/backstage")
 public class BackstageHandler {
     @Resource
-    BookService bookService;
+    private BookService bookService;
     @Resource
-    UserService userService;
+    private UserService userService;
     @Resource
-    CommentService commentService;
+    private CommentService commentService;
 
     /**
      * 分页查询图书信息

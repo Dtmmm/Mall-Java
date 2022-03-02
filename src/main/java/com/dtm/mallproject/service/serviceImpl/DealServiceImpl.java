@@ -30,15 +30,15 @@ import java.util.Map;
 @Service
 public class DealServiceImpl implements DealService {
     @Resource
-    DealMapper dealMapper;
+    private DealMapper dealMapper;
     @Resource
-    DealDetailMapper dealDetailMapper;
+    private DealDetailMapper dealDetailMapper;
     @Resource
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
     @Resource
-    BookMapper bookMapper;
+    private BookMapper bookMapper;
 
     @Override
     public List<DealInfoVO> selectDealInfo(String userId) {
@@ -73,7 +73,7 @@ public class DealServiceImpl implements DealService {
             int insertDealDetail = dealDetailMapper.insert(dealDetail);
             if (insertDealDetail <= 0) {return 0;}
 
-            // 从 Redis 中删除该条记录
+            // 从 Redis 的购物车中删除该条记录
             int del = redisUtil.hDel(redisCartKey, dealDetail.getBookId());
             if (del <= 0) {return 0;}
         }
@@ -113,12 +113,15 @@ public class DealServiceImpl implements DealService {
         }
 
         // 同步库存信息到数据库
+        /*
+        同步操作由定时任务完成
         int nowInventory = Integer.parseInt(redisUtil.hGet("inventory", dealDetails.get(0).getBookId()));
         BookDO book = new BookDO();
         book.setId(dealDetails.get(0).getBookId());
         book.setInventory(nowInventory);
         int updateResult = bookMapper.updateById(book);
         if (updateResult <= 0) {return fail;}
+        */
 
         // 更新订单表
         int insertDeal = dealMapper.insert(deal);
@@ -231,12 +234,15 @@ public class DealServiceImpl implements DealService {
         for (DealDetailDO dealDetail : dealDetails) {
             redisUtil.hIncrBy("inventory",dealDetail.getBookId(),dealDetail.getBookQuantity().longValue());
             // 同步库存信息到数据库
+            /*
+            同步操作由定时任务完成
             int nowInventory = Integer.parseInt(redisUtil.hGet("inventory", dealDetail.getBookId()));
             BookDO book = new BookDO();
             book.setId(dealDetail.getBookId());
             book.setInventory(nowInventory);
             int updateResult = bookMapper.updateById(book);
             if (updateResult <= 0) {return 0;}
+            */
         }
 
         int deleteDealResult = dealMapper.deleteById(dealId);

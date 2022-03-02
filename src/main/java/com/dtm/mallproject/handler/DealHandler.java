@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/deal")
 public class DealHandler {
     @Resource
-    DealService dealService;
+    private DealService dealService;
 
     /**
      * 结算功能

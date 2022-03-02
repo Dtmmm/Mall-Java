@@ -25,7 +25,7 @@ public class DealDO {
     private Double total;
     private String payWay;
     /**
-     * 交易状态： 1-交易完成 2-尚未发货 3-已发货 4-已签收 5-待支付 0-售后中
+     * 交易状态： 1-交易完成 2-尚未发货 3-已发货 4-已签收 5-已评论 6-待支付
      */
     private Integer state;
     @TableField(fill = FieldFill.INSERT)

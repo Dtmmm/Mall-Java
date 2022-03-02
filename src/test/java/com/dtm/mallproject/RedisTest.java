@@ -91,7 +91,7 @@ class RedisTest {
         Object hGet = redisUtil.hGet("testUtil", "k1");
         System.out.println("hGet-"+hGet);
 
-        Map<Object, Object> hEntries = redisUtil.hEntries("testUtil");
+        Map<String, String> hEntries = redisUtil.hEntries("testUtil");
         hEntries.forEach((key,value) -> System.out.println("hEntries-"+key+"-"+value));
 
         Boolean hHas = redisUtil.hHas("testUtil", "k3");

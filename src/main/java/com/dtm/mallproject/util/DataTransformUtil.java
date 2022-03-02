@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public class DataTransformUtil {
     @Resource
-    ClassificationMapper classificationMapper;
+    private ClassificationMapper classificationMapper;
 
     /**
      * 提取图书分页结果中需要的数据，组装成 BookPageDisplayVo 对象并返回
