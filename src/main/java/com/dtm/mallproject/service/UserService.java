@@ -128,8 +128,26 @@ public interface UserService {
 
     /**
      * 根据用户名或用户编号查询用户信息
+     *
      * @param condition 用户名或用户编号
      * @return 用户信息
      */
     UserDO selectUserByCondition(String condition);
+
+    /**
+     * 清空游客购物车
+     *
+     * @param visitorId 游客编号
+     * @return 操作结果
+     */
+    Integer clearVisitorCart(String visitorId);
+
+    /**
+     * 游客登录后，更新合并购物车信息，并删除之前的信息
+     *
+     * @param visitorId 游客编号
+     * @param userId 用户编号
+     * @return 操作结果
+     */
+    Integer updateVisitorToUser(String visitorId,String userId);
 }

@@ -248,4 +248,30 @@ public class UserServiceImpl implements UserService {
         qw.eq("id",condition).or().eq("user_name",condition);
         return userMapper.selectOne(qw);
     }
+
+    @Override
+    public Integer clearVisitorCart(String visitorId) {
+        // 1.获取游客的购物车信息
+        Map<String, String> cart = redisUtil.hEntries("cart_"+visitorId);
+        // 2.返还库存
+        cart.forEach((bookId,quantity) ->
+            redisUtil.hIncrBy("inventory",bookId,Long.parseLong(quantity))
+        );
+        // 3.删除游客购物车
+        return redisUtil.del("cart_"+visitorId);
+    }
+
+    @Override
+    public Integer updateVisitorToUser(String visitorId, String userId) {
+        // 1.获取游客的购物车信息
+        Map<String, String> cart = redisUtil.hEntries("cart_"+visitorId);
+        cart.forEach((bookId,quantity) -> {
+            // 2.添加到登陆后账户的购物车中
+            redisUtil.hIncrBy("cart_"+userId,bookId,Long.parseLong(quantity));
+        });
+        // 3.删除游客购物车
+        redisUtil.del("cart_"+visitorId);
+
+        return 1;
+    }
 }

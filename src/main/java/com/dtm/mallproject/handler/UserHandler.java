@@ -104,6 +104,7 @@ public class UserHandler {
      *
      * @param id 用户编号
      * @param bookId 图书编号
+     * @param quantity 图书数量
      * @return 操作结果，1：删除成功 0：删除失败
      */
     @PostMapping("/deleteCart")
@@ -164,5 +165,31 @@ public class UserHandler {
     @ResponseBody
     public Integer deleteCollection(@RequestParam String id, @RequestParam String bookId){
         return userService.deleteCollection(id,bookId);
+    }
+
+    /**
+     * 清空游客购物车
+     *
+     * @param visitorId 游客编号
+     * @return 操作结果
+     */
+    @GetMapping("/clearVisitorCart/{visitorId}")
+    @ResponseBody
+    public Integer clearVisitorCart(@PathVariable String visitorId){
+        return userService.clearVisitorCart(visitorId);
+    }
+
+    /**
+     * 游客登录后，更新合并购物车信息，并删除之前的信息
+     *
+     * @param visitorId 游客编号
+     * @param userId 用户编号
+     * @return 操作结果
+     */
+    @GetMapping("/updateVisitorToUser/{visitorId}/{userId}")
+    @ResponseBody
+    public Integer updateVisitorToUser(@PathVariable String visitorId,
+                                       @PathVariable String userId){
+        return userService.updateVisitorToUser(visitorId, userId);
     }
 }
