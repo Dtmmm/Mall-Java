@@ -23,7 +23,7 @@ public class LogAspect {
      * 定义一个无返回值，参数和方法体为空的方法来命名切入点
      */
 	@Pointcut("execution(* com.dtm.mallproject.handler.*.*(..))"+
-			"&&"+"!execution(* com.dtm.mallproject.handler.MyMetaObjectHandler.*(..))")
+			"&&"+"!execution(* com.dtm.mallproject.config.MetaObjectHandlerConfig.*(..))")
 	private void handlerPc() {
 	}
 
