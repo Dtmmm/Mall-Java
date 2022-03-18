@@ -2,6 +2,8 @@ package com.dtm.mallproject.service.serviceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dtm.mallproject.enums.LoginEnum;
+import com.dtm.mallproject.enums.ResultEnum;
 import com.dtm.mallproject.exception.NoSuchUserException;
 import com.dtm.mallproject.mapper.BookMapper;
 import com.dtm.mallproject.mapper.UserMapper;
@@ -52,7 +54,7 @@ public class UserServiceImpl implements UserService {
     public UserLoginVO login(String userId, String userPwd) {
         UserLoginVO userLoginVO = new UserLoginVO();
         // 首先是登录失败的状态，如果密码正确后面再覆盖 result 的值
-        userLoginVO.setResult(0);
+        userLoginVO.setResult(LoginEnum.FAIL.getCode());
 
         QueryWrapper<UserDO> qw = new QueryWrapper<>();
         qw.eq("user_id", userId);
@@ -67,13 +69,14 @@ public class UserServiceImpl implements UserService {
                 userLoginVO.setUserId(userId);
                 userLoginVO.setUserName(userDO.getUserName());
                 // 判断是否是管理员登录
-                int result = "admin000".equals(userId)?2:1;
+                int result = "admin000".equals(userId)?LoginEnum.MANAGER.getCode():LoginEnum.SUCCESS.getCode();
                 userLoginVO.setResult(result);
 
                 // 更新用户的最近登录时间
                 updateLastLoginDate(userDO.getId());
             }
         } catch (NoSuchUserException e) {
+            log.error("*****该用户不存在*****");
             System.out.println(e.getMessage());
         }
 
@@ -86,7 +89,7 @@ public class UserServiceImpl implements UserService {
      */
     private void updateLastLoginDate(String id){
         // 获取当前时间
-        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss"));
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         UserDO user = new UserDO();
         user.setId(id);
         user.setLastLoginDate(date);
@@ -106,14 +109,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @SuppressWarnings("unchecked")
     public Integer updateCartInfo(String userId, String bookId, Integer quantity) {
-        // 0:库存不足 1:成功 2:失败
-        final int shortage = 0;
-        final int success = 1;
-        final int fail = 2;
-
         // 1.判断 Redis 中图书的库存
         int inventory = Integer.parseInt(redisUtil.hGet("inventory", bookId));
-        if (inventory < quantity) {return shortage;}
+        if (inventory < quantity) {
+            return ResultEnum.SHORTAGE.getCode();
+        }
 
         // 2.开启事务执行增加操作
         List<Object> execute = (List<Object>)redisUtil.getRedisTemplate().execute(new SessionCallback() {
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
         // 3.判断事务执行结果
         if (execute == null || execute.size() == 0) {
             log.error("*****事务执行失败*****");
-            return fail;
+            return ResultEnum.FAIL.getCode();
         }
 
         // operations.exec()的返回值是一个集合，对应所有的事务操作
@@ -148,15 +148,15 @@ public class UserServiceImpl implements UserService {
                 int updateResult = bookMapper.updateById(book);
                 if (updateResult == 1) {return success;}
                 */
-                return success;
+                return ResultEnum.SUCCESS.getCode();
             }
             // 库存没有成功减少(高并发状态下才有可能出现)，恢复库存
             log.error("*****减少库存失败*****");
             redisUtil.hIncrBy("inventory", bookId, quantity.longValue());
-            return shortage;
+            return ResultEnum.SHORTAGE.getCode();
         } else {
             log.error("*****增加图书到购物车失败*****");
-            return fail;
+            return ResultEnum.FAIL.getCode();
         }
     }
 
@@ -181,7 +181,7 @@ public class UserServiceImpl implements UserService {
         Long returnInventory = redisUtil.hIncrBy("inventory",bookId,quantity.longValue());
         if (returnInventory <= 0) {
             log.error("*****返还图书库存失败*****");
-            return 0;
+            return ResultEnum.FAIL.getCode();
         }
         // 同步库存信息到数据库
         /*
@@ -272,6 +272,6 @@ public class UserServiceImpl implements UserService {
         // 3.删除游客购物车
         redisUtil.del("cart_"+visitorId);
 
-        return 1;
+        return ResultEnum.SUCCESS.getCode();
     }
 }

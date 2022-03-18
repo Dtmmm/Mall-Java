@@ -14,7 +14,6 @@ import java.util.List;
 public interface CommentService {
     /**
      * 根据图书编号分页查询评论
-     *
      * @param bookId 图书编号
      * @param currentPage 当前页
      * @param pageSize 页面大小
@@ -24,7 +23,6 @@ public interface CommentService {
 
     /**
      * 分页获取所有评论
-     *
      * @param currentPage 当前页
      * @param pageSize 页面大小
      * @return 分页后的评论信息
@@ -33,7 +31,6 @@ public interface CommentService {
 
     /**
      * 根据编号删除评论
-     *
      * @param id 评论编号
      * @return 操作结果
      */
@@ -41,7 +38,6 @@ public interface CommentService {
 
     /**
      * 模糊搜索评论
-     *
      * @param keyWord 关键字
      * @param select 搜索范围
      * @return 评论
@@ -50,7 +46,6 @@ public interface CommentService {
 
     /**
      * 评论操作
-     *
      * @param comments 评论
      * @return 操作结果
      */

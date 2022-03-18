@@ -34,7 +34,6 @@ public class Swagger2Config {
 
     /**
      * api基本信息的配置
-     *
      * @return 基本信息的配置
      */
     private ApiInfo apiInfo() {

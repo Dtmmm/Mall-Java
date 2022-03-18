@@ -85,6 +85,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper,BookDO> implements B
                 }
             });
         } catch (EmptyParameterException e) {
+            log.error("*****范围不能为空*****");
             System.out.println(e.getMessage());
         }
 

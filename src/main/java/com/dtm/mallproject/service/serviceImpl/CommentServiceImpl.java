@@ -2,6 +2,7 @@ package com.dtm.mallproject.service.serviceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dtm.mallproject.enums.ResultEnum;
 import com.dtm.mallproject.mapper.CommentMapper;
 import com.dtm.mallproject.mapper.UserMapper;
 import com.dtm.mallproject.pojo.entity.CommentDO;
@@ -66,12 +67,13 @@ public class CommentServiceImpl implements CommentService {
             // 遍历查出用户的头像
             String userId = comment.getUserId();
             List<Map<String, Object>> icon = userMapper.selectMaps(new QueryWrapper<UserDO>().select("icon").eq("id", userId));
-            System.out.println("icon"+icon);
             comment.setIcon(icon.get(0).get("icon").toString());
 
             int insert = commentMapper.insert(comment);
-            if (insert <= 0) {return 0;}
+            if (insert <= 0) {
+                return ResultEnum.FAIL.getCode();
+            }
         }
-        return 1;
+        return ResultEnum.SUCCESS.getCode();
     }
 }

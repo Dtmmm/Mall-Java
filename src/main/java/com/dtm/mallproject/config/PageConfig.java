@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 public class PageConfig {
     /**
      * 生成分页插件
-     *
      * @return PaginationInnerInterceptor 分页拦截器对象
      */
     @Bean

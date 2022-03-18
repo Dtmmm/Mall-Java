@@ -14,7 +14,6 @@ import java.util.List;
 public interface UserService {
     /**
      * 根据用户编号查询用户信息
-     *
      * @param id 用户编号
      * @return UserInfoVO 对象，包含用户的各项信息
      */
@@ -22,7 +21,6 @@ public interface UserService {
 
     /**
      * 登录方法
-     *
      * @param userId 用户账号
      * @param userPwd 用户密码
      * @return UserLoginVO 对象，包含用户的信息以及登录结果
@@ -32,7 +30,6 @@ public interface UserService {
 
     /**
      * 注册
-     *
      * @param user 用户信息
      * @return 操作结果
      */
@@ -40,7 +37,6 @@ public interface UserService {
 
     /**
      * 修改用户信息
-     *
      * @param user 新的用户信息
      * @return 修改结果，1表示修改成功，0表示修改失败
      */
@@ -48,7 +44,6 @@ public interface UserService {
 
     /**
      * 修改购物车
-     *
      * @param id 用户编号
      * @param bookId 图书编号
      * @param quantity 数量
@@ -58,7 +53,6 @@ public interface UserService {
 
     /**
      * 获取用户购物车信息
-     *
      * @param id 用户编号
      * @return 购物车信息
      */
@@ -66,7 +60,6 @@ public interface UserService {
 
     /**
      * 从购物车中删除书
-     *
      * @param id 用户编号
      * @param bookId 图书编号
      * @param quantity 图书数量
@@ -76,7 +69,6 @@ public interface UserService {
 
     /**
      * 添加到收藏夹
-     *
      * @param id 用户编号
      * @param bookId 图书编号
      * @return 操作结果，1:成功 0:失败
@@ -85,7 +77,6 @@ public interface UserService {
 
     /**
      * 获取用户收藏夹信息
-     *
      * @param id 用户编号
      * @return 收藏夹信息
      */
@@ -93,7 +84,6 @@ public interface UserService {
 
     /**
      * 从收藏夹中删除图书
-     *
      * @param id 用户编号
      * @param bookId 图书编号
      * @return 操作结果，1：删除成功 0：删除失败
@@ -102,7 +92,6 @@ public interface UserService {
 
     /**
      * 分页获取所有用户信息
-     *
      * @param currentPage 当前页
      * @param pageSize 页面大小
      * @return 分页后的数据
@@ -111,7 +100,6 @@ public interface UserService {
 
     /**
      * 模糊搜索用户信息
-     *
      * @param keyWord 关键字
      * @param select 范围
      * @return 用户信息
@@ -120,7 +108,6 @@ public interface UserService {
 
     /**
      * 根据用户编号删除用户
-     *
      * @param id 用户编号
      * @return 操作结果
      */
@@ -128,7 +115,6 @@ public interface UserService {
 
     /**
      * 根据用户名或用户编号查询用户信息
-     *
      * @param condition 用户名或用户编号
      * @return 用户信息
      */
@@ -136,7 +122,6 @@ public interface UserService {
 
     /**
      * 清空游客购物车
-     *
      * @param visitorId 游客编号
      * @return 操作结果
      */
@@ -144,7 +129,6 @@ public interface UserService {
 
     /**
      * 游客登录后，更新合并购物车信息，并删除之前的信息
-     *
      * @param visitorId 游客编号
      * @param userId 用户编号
      * @return 操作结果

@@ -2,6 +2,8 @@ package com.dtm.mallproject.service.serviceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dtm.mallproject.enums.DealStateEnum;
+import com.dtm.mallproject.enums.ResultEnum;
 import com.dtm.mallproject.mapper.BookMapper;
 import com.dtm.mallproject.mapper.DealDetailMapper;
 import com.dtm.mallproject.mapper.DealMapper;
@@ -65,7 +67,7 @@ public class DealServiceImpl implements DealService {
         int insertDeal = dealMapper.insert(deal);
         if (insertDeal <= 0) {
             log.error("*****新增订单表失败*****");
-            return 0;
+            return ResultEnum.FAIL.getCode();
         }
 
         String dealId = deal.getId();
@@ -76,52 +78,48 @@ public class DealServiceImpl implements DealService {
             int insertDealDetail = dealDetailMapper.insert(dealDetail);
             if (insertDealDetail <= 0) {
                 log.error("*****新增订单详情表失败*****");
-                return 0;
+                return ResultEnum.FAIL.getCode();
             }
 
             // 从 Redis 的购物车中删除该条记录
             int del = redisUtil.hDel(redisCartKey, dealDetail.getBookId());
             if (del <= 0) {
                 log.error("*****从Redis中删除购物车记录失败*****");
-                return 0;
+                return ResultEnum.FAIL.getCode();
             }
         }
 
         // 如果这笔订单是正常支付
-        if (deal.getState() == 2) {
+        if (deal.getState() == DealStateEnum.NOT_SHIPPED.getCode()) {
             // 更新用户累计消费额
             int updateConsumptionResult = updateConsumption(deal);
             if (updateConsumptionResult == 0) {
-                return 0;
+                return ResultEnum.FAIL.getCode();
             }
 
             // 更新图书累计销售量
             int updateSalesResult = updateSales(dealDetails);
             if (updateSalesResult == 0) {
-                return 0;
+                return ResultEnum.FAIL.getCode();
             }
         }
 
-        return 1;
+        return ResultEnum.SUCCESS.getCode();
     }
 
     @Override
     public Integer buyNow(DealDO deal, List<DealDetailDO> dealDetails) {
-        int shortage = 0;
-        int success = 1;
-        int fail = 2;
-
         // 判断库存
         String inventory = redisUtil.hGet("inventory", dealDetails.get(0).getBookId());
         if (Integer.parseInt(inventory) <= 0) {
-            return shortage;
+            return ResultEnum.SHORTAGE.getCode();
         }
 
         // 库存减一
         Long hDecrBy = redisUtil.hDecrBy("inventory", dealDetails.get(0).getBookId(), 1L);
         if (hDecrBy < 0) {
             log.error("*****减少库存失败*****");
-            return fail;
+            return ResultEnum.FAIL.getCode();
         }
 
         // 同步库存信息到数据库
@@ -139,7 +137,7 @@ public class DealServiceImpl implements DealService {
         int insertDeal = dealMapper.insert(deal);
         if (insertDeal <= 0) {
             log.error("*****新增订单表失败*****");
-            return fail;
+            return ResultEnum.FAIL.getCode();
         }
 
         // 更新订单详情表
@@ -149,26 +147,26 @@ public class DealServiceImpl implements DealService {
             int insertDealDetail = dealDetailMapper.insert(dealDetail);
             if (insertDealDetail <= 0) {
                 log.error("*****新增订单详情表失败*****");
-                return fail;
+                return ResultEnum.FAIL.getCode();
             }
         }
 
         // 如果这笔订单是正常支付
-        if (deal.getState() == 2) {
+        if (deal.getState() == DealStateEnum.NOT_SHIPPED.getCode()) {
             // 更新用户累计消费额
             int updateConsumptionResult = updateConsumption(deal);
             if (updateConsumptionResult == 0) {
-                return fail;
+                return ResultEnum.FAIL.getCode();
             }
 
             // 更新图书累计销售量
             int updateSalesResult = updateSales(dealDetails);
             if (updateSalesResult == 0) {
-                return fail;
+                return ResultEnum.FAIL.getCode();
             }
         }
 
-        return success;
+        return ResultEnum.SUCCESS.getCode();
     }
 
     /**
@@ -190,9 +188,9 @@ public class DealServiceImpl implements DealService {
 
         if (updateConsumptionResult <= 0) {
             log.error("*****更新用户累计消费额失败*****");
-            return 0;
+            return ResultEnum.FAIL.getCode();
         }
-        return 1;
+        return ResultEnum.SUCCESS.getCode();
     }
 
     /**
@@ -214,10 +212,10 @@ public class DealServiceImpl implements DealService {
             int updateQuantityResult = bookMapper.updateById(book);
             if (updateQuantityResult <= 0) {
                 log.error("*****更新图书累计销售量失败*****");
-                return 0;
+                return ResultEnum.FAIL.getCode();
             }
         }
-        return 1;
+        return ResultEnum.SUCCESS.getCode();
     }
 
     @Override
@@ -226,16 +224,18 @@ public class DealServiceImpl implements DealService {
         DealDO deal = new DealDO();
         deal.setId(dealId);
         deal.setPayWay(payWay);
-        deal.setState(2);
+        deal.setState(DealStateEnum.NOT_SHIPPED.getCode());
         int updateResult = dealMapper.updateById(deal);
-        if (updateResult != 1) {return 0;}
+        if (updateResult != 1) {
+            return ResultEnum.FAIL.getCode();
+        }
 
         // 更新用户累计消费额
         DealDO dealDO = dealMapper.selectOne(new QueryWrapper<DealDO>().eq("id", dealId));
         int updateConsumptionResult = updateConsumption(dealDO);
         if (updateConsumptionResult == 0) {
             log.error("*****更新用户累计消费额失败*****");
-            return 0;
+            return ResultEnum.FAIL.getCode();
         }
 
         // 更新图书累计销售量
@@ -243,10 +243,10 @@ public class DealServiceImpl implements DealService {
         int updateSalesResult = updateSales(dealDetails);
         if (updateSalesResult == 0) {
             log.error("*****更新图书累计销售量失败*****");
-            return 0;
+            return ResultEnum.FAIL.getCode();
         }
 
-        return 1;
+        return ResultEnum.SUCCESS.getCode();
     }
 
     @Override
@@ -275,14 +275,14 @@ public class DealServiceImpl implements DealService {
             int dealDealDetailResult = dealDetailMapper.delete(
                     new QueryWrapper<DealDetailDO>().eq("deal_id", dealId));
             if (dealDealDetailResult > 0){
-                return 1;
+                return ResultEnum.SUCCESS.getCode();
             } else {
                 log.error("*****删除订单详情失败*****");
-                return 0;
+                return ResultEnum.FAIL.getCode();
             }
         } else {
             log.error("*****删除订单失败*****");
-            return 0;
+            return ResultEnum.FAIL.getCode();
         }
     }
 
@@ -334,16 +334,15 @@ public class DealServiceImpl implements DealService {
             QueryWrapper<DealDetailDO> qw = new QueryWrapper<>();
             qw.eq("deal_id",id);
             int delete = dealDetailMapper.delete(qw);
-            // 都成功则返回1
             if (delete >0) {
-                return 1;
+                return ResultEnum.SUCCESS.getCode();
             } else {
                 log.error("*****删除订单详情失败*****");
-                return 0;
+                return ResultEnum.FAIL.getCode();
             }
         } else {
             log.error("*****删除订单失败*****");
-            return 0;
+            return ResultEnum.FAIL.getCode();
         }
     }
 

@@ -15,14 +15,12 @@ import java.util.List;
 public interface BookService extends IService<BookDO> {
     /**
      * 查询所有图书
-     *
      * @return 查询结果
      */
     List<BookDO> selectAllBook();
 
     /**
      * 根据分类分页查询图书
-     *
      * @param classification 分类代码
      * @param currentPage 当前页
      * @param pageSize 页面大小
@@ -32,7 +30,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 根据状态查询图书
-     *
      * @param state 状态代码
      * @return 查询结果 (限制首页只显示十本, 就算查询结果超过十条, 也只返回前十条)
      */
@@ -40,7 +37,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 根据关键字模糊查询图书
-     *
      * @param condition 查询条件，包括关键字、范围、分类、当前页、页面大小
      * @return DTO对象, 包含图书查询结果和总记录数及总页数信息
      */
@@ -48,7 +44,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 根据图书编号查询图书信息
-     *
      * @param id 图书编号
      * @return 图书信息
      */
@@ -61,7 +56,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 分页查询图书信息
-     *
      * @param currentPage 当前页
      * @param pageSize 页面大小
      * @return 处理后的图书信息
@@ -70,7 +64,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 模糊查询图书信息
-     *
      * @param keyWord 关键字
      * @param select 查询范围
      * @return 图书信息
@@ -79,7 +72,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 根据图书编号删除图书
-     *
      * @param id 图书编号
      * @return 操作结果
      */
@@ -87,7 +79,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 根据图书编号查询图书信息
-     *
      * @param id 书编号
      * @return 图书信息
      */
@@ -95,7 +86,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 更新图书信息
-     *
      * @param book 图书信息
      * @return 操作结果
      */
@@ -103,7 +93,6 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 添加图书
-     *
      * @param book 图书信息
      * @return 操作结果
      */
@@ -111,14 +100,12 @@ public interface BookService extends IService<BookDO> {
 
     /**
      * 查询图书排行榜
-     *
      * @return 图书排行榜
      */
     List<BookRankVO> selectRankBook();
 
     /**
      * 根据图书编号查询同类推荐的书
-     *
      * @param bookId 图书编号
      * @return 同类推荐的书
      */

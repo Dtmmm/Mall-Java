@@ -34,7 +34,6 @@ public class RedisUtil {
 
     /**
      * 获取 RedisTemplate 对象
-     *
      * @return RedisTemplate 对象
      */
     public RedisTemplate getRedisTemplate(){
@@ -43,7 +42,6 @@ public class RedisUtil {
 
     /**
      * 删除一个键
-     *
      * @param key 键
      * @return 删除结果
      */
@@ -55,7 +53,6 @@ public class RedisUtil {
 
     /**
      * 向一个 hash 中放入一条数据，如果不存在则创建
-     *
      * @param key 键
      * @param field 项
      * @param value 值
@@ -73,7 +70,6 @@ public class RedisUtil {
 
     /**
      * 向一个 hash 中放入多条数据，如果不存在则创建
-     *
      * @param key 键
      * @param map 对应多个键值
      * @return 操作结果
@@ -100,7 +96,6 @@ public class RedisUtil {
 
     /**
      * 获取 hash 中的所有的键值对集合
-     *
      * @param key 键
      * @return 键值对集合
      */
@@ -110,7 +105,6 @@ public class RedisUtil {
 
     /**
      * 删除 hash 中的值
-     *
      * @param key 键
      * @param field 项，可以为多个
      * @return 删除结果，每成功删除一项则结果加 1，全部失败则为 0
@@ -122,7 +116,6 @@ public class RedisUtil {
 
     /**
      * 判断 hash 中是否存在该字段
-     *
      * @param key 键
      * @param field 项
      * @return 判断结果
@@ -132,8 +125,7 @@ public class RedisUtil {
     }
 
     /**
-     * hash 的子性递增
-     *
+     * hash 的原子性递增
      * @param key 键
      * @param field 项
      * @param increment 递增值
@@ -145,7 +137,6 @@ public class RedisUtil {
 
     /**
      * hash 的原子性递减
-     *
      * @param key 键
      * @param field 项
      * @param decrement 递减值
@@ -157,7 +148,6 @@ public class RedisUtil {
 
     /**
      * 向 Set 中添加成员 (数据不能重复)
-     *
      * @param key 键
      * @param member 成员 (可以为多个)
      * @return 操作结果，每成功添加一项则结果加 1，全部失败则为 0
@@ -168,7 +158,6 @@ public class RedisUtil {
 
     /**
      * 从 Set 中删除成员
-     *
      * @param key 键
      * @param member 成员 (可以为多个)
      * @return 操作结果，每成功删除一项则结果加 1，全部失败则为 0
@@ -179,7 +168,6 @@ public class RedisUtil {
 
     /**
      * 获取 Set 中的所有成员
-     *
      * @param key 键
      * @return 所有成员
      */

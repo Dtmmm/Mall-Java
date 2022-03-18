@@ -20,13 +20,13 @@ import java.util.List;
  * @description : 组装数据帮助类
  */
 @Component
+@SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
 public class DataTransformUtil {
     @Resource
     private ClassificationMapper classificationMapper;
 
     /**
      * 提取图书分页结果中需要的数据，组装成 BookPageDisplayVo 对象并返回
-     *
      * @param page 图书分页结果
      * @return 组装后的 BookPageDisplayVo 对象
      */
@@ -43,11 +43,9 @@ public class DataTransformUtil {
 
     /**
      * 提取 BookDO 对象中需要的数据，组装成 BookStateVO 对象并返回
-     *
      * @param list BookDO 对象集合
      * @return BookStateVO 对象集合
      */
-    @SuppressWarnings("AlibabaLowerCamelCaseVariableNaming")
     public List<BookStateVO> bookDOToBookStateVO(List<BookDO> list){
         List<BookStateVO> data = new ArrayList<>(12);
         // 使用流截取前12条记录
@@ -60,7 +58,6 @@ public class DataTransformUtil {
 
     /**
      * 提取评论分页结果中需要的数据，组装成 CommentVO 对象并返回
-     *
      * @param page 评论分页结果
      * @return 组装后的 CommentVO 对象
      */
@@ -77,7 +74,6 @@ public class DataTransformUtil {
 
     /**
      * 提取图书信息分页结果中需要的数据，并取分类代码对应的中文，组装成 BookInfoPageDisplayVO 对象并返回
-     *
      * @param page 书信息分页结果
      * @return 组装后的 BookInfoPageDisplayVO 对象
      */
@@ -99,7 +95,6 @@ public class DataTransformUtil {
 
     /**
      * 提取 BookDO 对象中需要的数据，组装成 BookRankVO 对象并返回
-     *
      * @param list BookDO 对象集合
      * @return BookRankVO 对象集合
      */
@@ -115,7 +110,6 @@ public class DataTransformUtil {
 
     /**
      * 提取 BookDO 对象中需要的数据，组装成 RecommendBookVO 对象并返回
-     *
      * @param list BookDO 对象集合
      * @return RecommendBookVO 对象集合
      */
