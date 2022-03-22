@@ -58,7 +58,7 @@ public class UserHandler {
      * @return 操作结果
      */
     @ApiOperation("注册")
-    @PutMapping("/register")
+    @PostMapping("/register")
     @ResponseBody
     public Integer register(@ApiParam("用户信息") @RequestBody UserDO user){
         return userService.register(user);
