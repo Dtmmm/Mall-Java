@@ -6,7 +6,6 @@ import com.dtm.mallproject.service.CommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,7 +18,7 @@ import java.util.List;
  * @description : 评论的相关操作对应的处理器
  */
 @Api(tags = "CommentHandler-评论的相关操作对应的处理器")
-@Controller
+@RestController
 @RequestMapping("/comment")
 public class CommentHandler {
     @Resource
@@ -34,7 +33,6 @@ public class CommentHandler {
      */
     @ApiOperation("根据图书编号分页查询评论")
     @GetMapping("/selectCommentByBookId/{bookId}/{currentPage}/{pageSize}")
-    @ResponseBody
     public CommentPageDisplayVO selectCommentByBookId(
             @ApiParam("图书编号") @PathVariable String bookId,
             @ApiParam("当前页") @PathVariable Integer currentPage,
@@ -49,7 +47,6 @@ public class CommentHandler {
      */
     @ApiOperation("评论操作")
     @PostMapping("/insertComment")
-    @ResponseBody
     public Integer insertComment(
             @ApiParam("评论") @RequestBody List<CommentDO> comments){
         return commentService.insertComment(comments);

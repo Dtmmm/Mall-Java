@@ -19,7 +19,7 @@ import java.util.List;
  * @description : 用户的相关操作对应的处理器
  */
 @Api(tags = "UserHandler-用户的相关操作对应的处理器")
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserHandler {
     @Resource
@@ -32,7 +32,6 @@ public class UserHandler {
      */
     @ApiOperation("根据用户编号查询用户信息")
     @GetMapping("/selectUserById/{id}")
-    @ResponseBody
     public UserInfoVO selectUserById(@ApiParam("用户编号") @PathVariable String id){
         return userService.selectUserById(id);
     }
@@ -45,7 +44,6 @@ public class UserHandler {
      */
     @ApiOperation("登录(使用表单传递参数)")
     @PostMapping("/login")
-    @ResponseBody
     public UserLoginVO login(
             @ApiParam("账号") @RequestParam String userId,
             @ApiParam("密码") @RequestParam String userPwd){
@@ -59,7 +57,6 @@ public class UserHandler {
      */
     @ApiOperation("注册")
     @PostMapping("/register")
-    @ResponseBody
     public Integer register(@ApiParam("用户信息") @RequestBody UserDO user){
         return userService.register(user);
     }
@@ -71,7 +68,6 @@ public class UserHandler {
      */
     @ApiOperation("修改用户信息")
     @PutMapping("/updateUser")
-    @ResponseBody
     public Integer updateUser(@ApiParam("用户信息") @RequestBody UserDO user){
         return userService.updateUser(user);
     }
@@ -83,7 +79,6 @@ public class UserHandler {
      */
     @ApiOperation("添加至购物车")
     @PostMapping("/addToCart")
-    @ResponseBody
     public Integer addToCart(
             @ApiParam("参数对象，包含用户编号、图书编号、数量") @RequestBody UpdateCartVO updateCartVO){
         return userService.updateCartInfo(updateCartVO.getId(),updateCartVO.getBookId(),updateCartVO.getQuantity());
@@ -96,7 +91,6 @@ public class UserHandler {
      */
     @ApiOperation("获取用户购物车信息")
     @GetMapping("/cartInfo/{id}")
-    @ResponseBody
     public List<CartInfoVO> cartInfo(@ApiParam("用户编号") @PathVariable String id){
         return userService.cartInfo(id);
     }
@@ -108,7 +102,6 @@ public class UserHandler {
      */
     @ApiOperation("从购物车中删除书")
     @PostMapping("/deleteCart")
-    @ResponseBody
     public Integer deleteCart(
             @ApiParam("参数对象，包含用户编号、图书编号、数量") @RequestBody UpdateCartVO updateCartVO){
         return userService.deleteCart(updateCartVO.getId(),updateCartVO.getBookId(),updateCartVO.getQuantity());
@@ -121,7 +114,6 @@ public class UserHandler {
      */
     @ApiOperation("改变购物车中图书的数量")
     @PutMapping("/changeQuantity")
-    @ResponseBody
     public Integer changeQuantity(
             @ApiParam("参数对象，包含用户编号、图书编号、数量") @RequestBody UpdateCartVO updateCartVO){
         return userService.updateCartInfo(updateCartVO.getId(),updateCartVO.getBookId(),updateCartVO.getQuantity());
@@ -135,7 +127,6 @@ public class UserHandler {
      */
     @ApiOperation("添加到收藏夹")
     @PostMapping("/addToCollection/{id}/{bookId}")
-    @ResponseBody
     public Integer addToCollection(
             @ApiParam("用户编号") @PathVariable String id,
             @ApiParam("图书编号") @PathVariable String bookId){
@@ -149,7 +140,6 @@ public class UserHandler {
      */
     @ApiOperation("获取用户收藏夹信息")
     @GetMapping("/collectionInfo/{id}")
-    @ResponseBody
     public List<CollectionInfoVO> collectionInfo(@ApiParam("用户编号") @PathVariable String id){
         return userService.collectionInfo(id);
     }
@@ -162,7 +152,6 @@ public class UserHandler {
      */
     @ApiOperation("从收藏夹中删除图书")
     @DeleteMapping("/deleteCollection/{id}/{bookId}")
-    @ResponseBody
     public Integer deleteCollection(
             @ApiParam("用户编号") @PathVariable String id,
             @ApiParam("图书编号") @PathVariable String bookId){
@@ -176,7 +165,6 @@ public class UserHandler {
      */
     @ApiOperation("清空游客购物车")
     @GetMapping("/clearVisitorCart/{visitorId}")
-    @ResponseBody
     public Integer clearVisitorCart(@ApiParam("游客编号") @PathVariable String visitorId){
         return userService.clearVisitorCart(visitorId);
     }
@@ -189,7 +177,6 @@ public class UserHandler {
      */
     @ApiOperation("游客登录后，更新合并购物车信息，并删除之前的信息")
     @GetMapping("/updateVisitorToUser/{visitorId}/{userId}")
-    @ResponseBody
     public Integer updateVisitorToUser(
             @ApiParam("游客编号") @PathVariable String visitorId,
             @ApiParam("用户编号") @PathVariable String userId){

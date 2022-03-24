@@ -6,7 +6,6 @@ import com.dtm.mallproject.service.DealService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,7 +18,7 @@ import java.util.List;
  * @description : 订单的相关操作对应的处理器
  */
 @Api(tags = "DealHandler-订单的相关操作对应的处理器")
-@Controller
+@RestController
 @RequestMapping("/deal")
 public class DealHandler {
     @Resource
@@ -32,7 +31,6 @@ public class DealHandler {
      */
     @ApiOperation("结算功能")
     @PostMapping("/check")
-    @ResponseBody
     public Integer check(
             @ApiParam("DealInfoVO 对象，包含订单信息和订单详情信息") @RequestBody DealInfoVO dealInfo){
         return dealService.check(dealInfo.getDeal(), dealInfo.getDealDetails());
@@ -45,7 +43,6 @@ public class DealHandler {
      */
     @ApiOperation("立即购买功能")
     @PostMapping("/buyNow")
-    @ResponseBody
     public Integer buyNow(
             @ApiParam("DealInfoVO 对象，包含订单信息和订单详情信息") @RequestBody DealInfoVO dealInfo){
         return dealService.buyNow(dealInfo.getDeal(), dealInfo.getDealDetails());
@@ -58,7 +55,6 @@ public class DealHandler {
      */
     @ApiOperation("查看用户订单")
     @GetMapping("/selectDealInfo/{userId}")
-    @ResponseBody
     public List<DealInfoVO> selectDealInfo(@ApiParam("用户编号") @PathVariable String userId){
         return dealService.selectDealInfo(userId);
     }
@@ -71,7 +67,6 @@ public class DealHandler {
      */
     @ApiOperation("未支付的订单重新支付")
     @GetMapping("/pay/{dealId}/{payWay}")
-    @ResponseBody
     public Integer pay(
             @ApiParam("订单号") @PathVariable String dealId,
             @ApiParam("支付方式") @PathVariable String payWay){
@@ -85,7 +80,6 @@ public class DealHandler {
      */
     @ApiOperation("取消订单")
     @DeleteMapping("/deleteDeal/{dealId}")
-    @ResponseBody
     public Integer deleteDeal(
             @ApiParam("订单号") @PathVariable String dealId){
         return dealService.deleteDeal(dealId);
@@ -99,7 +93,6 @@ public class DealHandler {
      */
     @ApiOperation("分页查询所有订单")
     @GetMapping("/selectAllDeal/{currentPage}/{pageSize}")
-    @ResponseBody
     public DealInfoPageDisplayVO selectAllDeal(
             @ApiParam("当前页") @PathVariable Integer currentPage,
             @ApiParam("页面大小") @PathVariable Integer pageSize){
@@ -114,7 +107,6 @@ public class DealHandler {
      */
     @ApiOperation("模糊搜索订单")
     @GetMapping("/searchDeal/{keyWord}/{select}")
-    @ResponseBody
     public List<DealInfoVO> searchDeal(
             @ApiParam("关键字") @PathVariable String keyWord,
             @ApiParam("搜索范围") @PathVariable String select){
@@ -128,7 +120,6 @@ public class DealHandler {
      */
     @ApiOperation("根据订单编号删除订单")
     @DeleteMapping("/deleteDealById/{id}")
-    @ResponseBody
     public Integer deleteDealById(@ApiParam("订单编号") @PathVariable String id){
         return dealService.deleteDealById(id);
     }
@@ -141,7 +132,6 @@ public class DealHandler {
      */
     @ApiOperation("修改订单状态")
     @PostMapping("/updateDealState/{dealId}/{state}")
-    @ResponseBody
     public Integer updateDealState(@PathVariable String dealId, @PathVariable String state){
         return dealService.updateDealState(dealId,Integer.parseInt(state));
     }
