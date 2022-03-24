@@ -1,6 +1,5 @@
 package com.dtm.mallproject.handler;
 
-import cn.hutool.log.Log;
 import com.dtm.mallproject.exception.WorkBookErrorException;
 import com.dtm.mallproject.pojo.entity.BookDO;
 import com.dtm.mallproject.pojo.entity.CommentDO;
