@@ -1,5 +1,6 @@
 package com.dtm.mallproject.service.serviceImpl;
 
+import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dtm.mallproject.enums.LoginEnum;
@@ -63,7 +64,9 @@ public class UserServiceImpl implements UserService {
             if (userDO == null) {
                 throw new NoSuchUserException("该用户不存在");
             }
-            if (userDO.getUserPwd().equals(userPwd)) {
+            // 加密密码
+            String md5HexPwd = DigestUtil.md5Hex(userPwd);
+            if (userDO.getUserPwd().equals(md5HexPwd)) {
                 // 组装数据
                 userLoginVO.setId(userDO.getId());
                 userLoginVO.setUserId(userId);
@@ -77,7 +80,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (NoSuchUserException e) {
             log.error("*****该用户不存在*****");
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
 
         return userLoginVO;
@@ -98,6 +101,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer register(UserDO user) {
+        String userPwd = user.getUserPwd();
+        user.setUserPwd(DigestUtil.md5Hex(userPwd));
         return userMapper.insert(user);
     }
 
