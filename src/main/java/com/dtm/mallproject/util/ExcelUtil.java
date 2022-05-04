@@ -44,6 +44,8 @@ public class ExcelUtil {
         String discount = "";
         if (bookDiscount < 1){
             discount = new DecimalFormat("0.0").format(bookDiscount*10) + "折";
+        } else if(bookDiscount == 1){
+            discount = "无";
         }
 
         // 获取状态信息
