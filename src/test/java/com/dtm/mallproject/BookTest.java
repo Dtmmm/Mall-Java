@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -55,15 +56,17 @@ class BookTest {
     // 根据图书编号查询
     @Test
     void testSelectBookByBookID(){
-        BookDetailVO book = bookService.selectBookById("001");
+        BookDetailVO book = bookService.selectBookById("03b0e2d2c6055605842021185892a9e9");
         System.out.println(book);
     }
 
+    // 初始化Redis库存信息
     @Test
     void testInit(){
         bookService.initInventory();
     }
 
+    // 分页查询图书信息
     @Test
     void testSelectBookInfo(){
         BookInfoPageDisplayVO bookInfoPageDisplayVO = bookService.selectBookInfo(1, 10);

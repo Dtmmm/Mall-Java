@@ -32,6 +32,7 @@ public class BookDO {
     private Double discount;
     private String classificationCode;
     private String img;
+    private String isbn;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
     @TableField(fill = FieldFill.INSERT_UPDATE)
